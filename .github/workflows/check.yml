@@ -1,13 +1,13 @@
-name: XMLA to BIM and Upload to Power BI
+name: Deploy XMLA to Power BI
 
 on:
   push:
     paths:
-      - "aa.xmla"  # Trigger only if aa.xmla is changed
+      - "aa.xmla"  # Trigger only if aa.xmla changes
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  process-xmla:
-    name: Convert XMLA to BIM and Upload
+  deploy_to_pbi:
     runs-on: windows-latest
 
     steps:
@@ -15,25 +15,37 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify XMLA File Exists
-        shell: pwsh  # Ensure PowerShell is used
+        shell: pwsh
         run: |
           if (Test-Path "aa.xmla") {
             Write-Host "✅ aa.xmla found"
           } else {
-            Write-Host "❌ aa.xmla NOT found"
+            Write-Host "❌ aa.xmla NOT found. Stopping workflow."
             exit 1
           }
 
       - name: Download Tabular Editor
         run: |
-          Invoke-WebRequest -Uri "https://github.com/otykier/TabularEditor/releases/download/2.16.4/TabularEditor.Portable.zip" -OutFile "TabularEditor.zip"
+          Invoke-WebRequest -Uri "https://github.com/TabularEditor/TabularEditor/releases/download/2.16.4/TabularEditor.Portable.zip" -OutFile "TabularEditor.zip"
           Expand-Archive -Path "TabularEditor.zip" -DestinationPath "TabularEditor"
           Remove-Item "TabularEditor.zip"
 
       - name: Convert XMLA to BIM
         run: |
-          .\TabularEditor\TabularEditor.exe aa.xmla -B Model.bim
+          .\TabularEditor\TabularEditor.exe -S "aa.xmla" -B "Model.bim"
+        working-directory: ./TabularEditor
+
+      - name: Verify BIM File Exists
+        shell: pwsh
+        run: |
+          if (Test-Path "TabularEditor/Model.bim") {
+            Write-Host "✅ Model.bim created successfully"
+          } else {
+            Write-Host "❌ Model.bim NOT found. Stopping workflow."
+            exit 1
+          }
 
       - name: Upload BIM to Power BI Workspace
         run: |
-          .\TabularEditor\TabularEditor.exe Model.bim -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
+          .\TabularEditor\TabularEditor.exe "Model.bim" -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
+        working-directory: ./TabularEditor
