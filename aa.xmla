@@ -3,7 +3,7 @@
     <CreateOrReplace>
       <ObjectDefinition>
         <Database xmlns="http://schemas.microsoft.com/analysisservices/2010/engine">
-          <ID>TestDataset</ID> <!-- Changed from 'TestDataset' to 'SalesDataset' -->
+          <ID>TstDataset</ID> <!-- Changed from 'TestDataset' to 'SalesDataset' -->
           <Name>Sales Dataset</Name> <!-- Changed from 'Test Dataset' to 'Sales Dataset' -->
           <CompatibilityLevel>1500</CompatibilityLevel>
           <Model>
