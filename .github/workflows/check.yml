@@ -3,13 +3,13 @@ name: Convert XMLA to BIM and Upload to Power BI
 on:
   push:
     paths:
-      - "aa.xmla"  # Trigger only when aa.xmla file changes
+      - "aa.xmla"
     branches:
       - main
 
 jobs:
   convert-and-upload:
-    runs-on: windows-latest  # Using a Windows runner
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Repository
@@ -20,10 +20,23 @@ jobs:
           Invoke-WebRequest -Uri "https://github.com/otykier/TabularEditor/releases/download/2.16.4/TabularEditor.Portable.zip" -OutFile "TabularEditor.zip"
           Expand-Archive -Path "TabularEditor.zip" -DestinationPath "TabularEditor"
           Remove-Item "TabularEditor.zip"
-      
+
+      - name: Verify Tabular Editor Installation
+        run: |
+          ls -l TabularEditor  # Check if extracted properly
+
+      - name: Check XMLA File
+        run: |
+          if [ -f "aa.xmla" ]; then echo "aa.xmla found"; else echo "aa.xmla NOT found"; fi
+
       - name: Convert XMLA to BIM
         run: |
-          ./TabularEditor/TabularEditor.exe aa.xmla -B Model.bim
+          ./TabularEditor/TabularEditor.exe aa.xmla -B Model.bim || echo "Conversion failed!"
+
+      - name: Check if Model.bim Exists
+        run: |
+          ls -l
+          if [ -f "Model.bim" ]; then echo "Model.bim found"; else echo "Model.bim NOT found"; exit 1; fi
 
       - name: Upload BIM to Power BI Workspace
         run: |
