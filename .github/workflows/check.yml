@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "aa.xmla"  # Trigger only if aa.xmla changes
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   deploy_to_pbi:
@@ -24,21 +24,28 @@ jobs:
             exit 1
           }
 
-      - name: Download Tabular Editor
+      - name: Download & Install Tabular Editor
         run: |
           Invoke-WebRequest -Uri "https://github.com/TabularEditor/TabularEditor/releases/download/2.16.4/TabularEditor.Portable.zip" -OutFile "TabularEditor.zip"
           Expand-Archive -Path "TabularEditor.zip" -DestinationPath "TabularEditor"
           Remove-Item "TabularEditor.zip"
+          Get-ChildItem -Path TabularEditor  # Debug: Check contents
 
       - name: Convert XMLA to BIM
         run: |
-          .\TabularEditor\TabularEditor.exe -S "aa.xmla" -B "Model.bim"
-        working-directory: ./TabularEditor
+          $editorPath = Get-ChildItem -Path TabularEditor -Filter "TabularEditor.exe" -Recurse | Select-Object -ExpandProperty FullName
+          if ($editorPath) {
+            & $editorPath -S "aa.xmla" -B "Model.bim"
+          } else {
+            Write-Host "❌ TabularEditor.exe NOT found"
+            exit 1
+          }
+        shell: pwsh
 
       - name: Verify BIM File Exists
         shell: pwsh
         run: |
-          if (Test-Path "TabularEditor/Model.bim") {
+          if (Test-Path "Model.bim") {
             Write-Host "✅ Model.bim created successfully"
           } else {
             Write-Host "❌ Model.bim NOT found. Stopping workflow."
@@ -47,5 +54,11 @@ jobs:
 
       - name: Upload BIM to Power BI Workspace
         run: |
-          .\TabularEditor\TabularEditor.exe "Model.bim" -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
-        working-directory: ./TabularEditor
+          $editorPath = Get-ChildItem -Path TabularEditor -Filter "TabularEditor.exe" -Recurse | Select-Object -ExpandProperty FullName
+          if ($editorPath) {
+            & $editorPath "Model.bim" -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
+          } else {
+            Write-Host "❌ TabularEditor.exe NOT found for upload"
+            exit 1
+          }
+        shell: pwsh
