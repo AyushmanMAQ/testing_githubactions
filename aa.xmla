@@ -3,8 +3,8 @@
     <CreateOrReplace>
       <ObjectDefinition>
         <Database xmlns="http://schemas.microsoft.com/analysisservices/2010/engine">
-          <ID>TestDataset</ID>
-          <Name>Test Dataset</Name>
+          <ID>SalesDataset</ID> <!-- Changed from 'TestDataset' to 'SalesDataset' -->
+          <Name>Sales Dataset</Name> <!-- Changed from 'Test Dataset' to 'Sales Dataset' -->
           <CompatibilityLevel>1500</CompatibilityLevel>
           <Model>
             <Tables>
@@ -14,6 +14,10 @@
                   <Column>
                     <Name>SalesAmount</Name>
                     <DataType>Double</DataType>
+                  </Column>
+                  <Column>
+                    <Name>QuantitySold</Name> <!-- Added new column -->
+                    <DataType>Int32</DataType>
                   </Column>
                 </Columns>
                 <Measures>
@@ -25,6 +29,10 @@
                     <Name>Average Sales</Name>
                     <Expression>AVERAGE(Sales[SalesAmount])</Expression>
                   </Measure>
+                  <Measure>
+                    <Name>Total Quantity Sold</Name> <!-- Added new measure -->
+                    <Expression>SUM(Sales[QuantitySold])</Expression>
+                  </Measure>
                 </Measures>
               </Table>
               <Table>
@@ -32,7 +40,7 @@
                 <Columns>
                   <Column>
                     <Name>CustomerName</Name>
-                    <DataType>String</DataType>
+                    <DataType>Text</DataType> <!-- Changed data type from 'String' to 'Text' -->
                   </Column>
                 </Columns>
               </Table>
