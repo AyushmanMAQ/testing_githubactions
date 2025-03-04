@@ -3,8 +3,8 @@
     <CreateOrReplace>
       <ObjectDefinition>
         <Database xmlns="http://schemas.microsoft.com/analysisservices/2010/engine">
-          <ID>SampleDataset</ID>
-          <Name>Sample Dataset</Name>
+          <ID>TestDataset</ID>
+          <Name>Test Dataset</Name>
           <CompatibilityLevel>1500</CompatibilityLevel>
           <Model>
             <Tables>
@@ -21,7 +21,20 @@
                     <Name>Total Sales</Name>
                     <Expression>SUM(Sales[SalesAmount])</Expression>
                   </Measure>
+                  <Measure>
+                    <Name>Average Sales</Name>
+                    <Expression>AVERAGE(Sales[SalesAmount])</Expression>
+                  </Measure>
                 </Measures>
+              </Table>
+              <Table>
+                <Name>Customers</Name>
+                <Columns>
+                  <Column>
+                    <Name>CustomerName</Name>
+                    <DataType>String</DataType>
+                  </Column>
+                </Columns>
               </Table>
             </Tables>
           </Model>
