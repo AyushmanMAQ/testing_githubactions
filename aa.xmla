@@ -53,7 +53,7 @@
                 ]
               },
               {
-                "name": "District Description",
+                "name": "District_Description",
                 "dataType": "string",
                 "sourceColumn": "District Description",
                 "lineageTag": "98aae5e7-a55d-4cfa-9cb2-f080784268cd",
