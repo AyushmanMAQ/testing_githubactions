@@ -45,6 +45,8 @@ jobs:
           & TabularEditor\TabularEditor.exe "aa.xmla" -B "Model.bim"
 
           # Verify Model.bim creation
+          Write-Host Test-path
+          
           if (!(Test-Path "Model.bim")) {
             Write-Host "❌ Model.bim NOT created!"
             exit 1
