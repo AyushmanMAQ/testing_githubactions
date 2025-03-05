@@ -8,53 +8,76 @@ on:
 
 jobs:
   convert_and_upload:
-    runs-on: windows-latest  # Ensure Windows for Tabular Editor
+    runs-on: windows-latest  # Windows needed for Tabular Editor
     steps:
 
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Print XMLA File Location
+      - name: Verify XMLA File Exists
         shell: pwsh
         run: |
-          $xmlaPath = (Resolve-Path "aa.xmla").Path
-          Write-Host "XMLA file is stored at: $xmlaPath"
+          if (!(Test-Path "aa.xmla")) {
+            Write-Host "Error: XMLA file not found!"
+            exit 1
+          } else {
+            Write-Host "XMLA file located at: $(Resolve-Path 'aa.xmla')"
+          }
 
       - name: Download & Extract Tabular Editor
+        shell: pwsh
         run: |
           $url = "https://github.com/otykier/TabularEditor/releases/download/2.16.4/TabularEditor.Portable.zip"
-          Invoke-WebRequest -Uri $url -OutFile "TabularEditor.zip"
-          Expand-Archive -Path "TabularEditor.zip" -DestinationPath "TabularEditor"
-          Remove-Item "TabularEditor.zip"
+          $zipPath = "TabularEditor.zip"
+          $extractPath = "TabularEditor"
+
+          Write-Host "Downloading Tabular Editor..."
+          Invoke-WebRequest -Uri $url -OutFile $zipPath
+
+          Write-Host "Extracting Tabular Editor..."
+          Expand-Archive -Path $zipPath -DestinationPath $extractPath
+          Remove-Item $zipPath -Force
+
+          Write-Host "Tabular Editor successfully downloaded and extracted."
 
       - name: Verify Tabular Editor Exists
+        shell: pwsh
         run: |
-          Write-Host "Verifying Tabular Editor..."
-          Test-Path "TabularEditor\TabularEditor.exe"
+          if (!(Test-Path "TabularEditor\TabularEditor.exe")) {
+            Write-Host "Error: Tabular Editor not found!"
+            exit 1
+          } else {
+            Write-Host "Tabular Editor successfully located."
+          }
 
       - name: Convert XMLA to BIM
         shell: pwsh
         run: |
-          Write-Host "Creating output directory for BIM..."
-          New-Item -ItemType Directory -Path "bim_output" -Force
-
           Write-Host "Converting XMLA to BIM..."
           $xmlaPath = (Resolve-Path "aa.xmla").Path
-          $bimPath = (Resolve-Path "bim_output").Path + "\Model.bim"
+          $bimPath = "Model.bim"
 
-          .\TabularEditor\TabularEditor.exe "$xmlaPath" -B "$bimPath"
-          Write-Host "Conversion complete. BIM file stored at: $bimPath"
+          .\TabularEditor\TabularEditor.exe $xmlaPath -B $bimPath
 
-      - name: Display BIM File Location
-        shell: pwsh
-        run: |
-          $bimPath = (Resolve-Path "bim_output\Model.bim").Path
-          Write-Host "BIM file created at: $bimPath"
+          if (!(Test-Path $bimPath)) {
+            Write-Host "Error: BIM file conversion failed!"
+            exit 1
+          } else {
+            Write-Host "BIM file successfully created at: $(Resolve-Path $bimPath)"
+          }
 
       - name: Upload BIM to Power BI Workspace
         shell: pwsh
         run: |
           Write-Host "Uploading BIM to Power BI Workspace..."
-          $bimPath = (Resolve-Path "bim_output\Model.bim").Path
-          .\TabularEditor\TabularEditor.exe "$bimPath" -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
-          Write-Host "Upload complete."
+          $bimPath = "Model.bim"
+          $powerBiWorkspace = "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation"
+
+          if (!(Test-Path $bimPath)) {
+            Write-Host "Error: BIM file not found, cannot upload!"
+            exit 1
+          }
+
+          .\TabularEditor\TabularEditor.exe $bimPath -D $powerBiWorkspace -O
+
+          Write-Host "Upload to Power BI completed successfully."
