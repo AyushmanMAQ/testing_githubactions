@@ -74,7 +74,7 @@ jobs:
           }
 
           try {
-            .\TabularEditor\TabularEditor.exe $xmlaPath -B $bimPath
+            .\TabularEditor\TabularEditor.exe "$xmlaPath" -B "$bimPath"
           } catch {
             Write-Host "Error: Failed to convert XMLA to BIM."
             exit 1
