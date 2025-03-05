@@ -42,7 +42,7 @@ jobs:
           }
 
           # Run Tabular Editor conversion
-          & TabularEditor\TabularEditor.exe -S "aa.xmla" -B "Model.bim"
+          & TabularEditor\TabularEditor.exe "aa.xmla" -B "Model.bim"
 
           # Verify Model.bim creation
           if (!(Test-Path "Model.bim")) {
