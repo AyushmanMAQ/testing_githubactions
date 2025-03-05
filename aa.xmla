@@ -14,7 +14,7 @@
           "returnErrorValuesAsNull": true
         },
         "defaultPowerBIDataSourceVersion": "powerBI_V3",
-        "discourageImplicitMeasures": tre,
+        "discourageImplicitMeasures": te,
         "sourceQueryCulture": "en-US",
         "tables": [
           {
