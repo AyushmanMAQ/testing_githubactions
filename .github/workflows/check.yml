@@ -35,19 +35,26 @@ jobs:
       - name: Convert XMLA to BIM
         shell: pwsh
         run: |
+          Write-Host "Creating output directory for BIM..."
+          New-Item -ItemType Directory -Path "bim_output" -Force
+
           Write-Host "Converting XMLA to BIM..."
-          .\TabularEditor\TabularEditor.exe "aa.xmla" -B "Model.bim"
-          Write-Host "Conversion complete."
+          $xmlaPath = (Resolve-Path "aa.xmla").Path
+          $bimPath = (Resolve-Path "bim_output").Path + "\Model.bim"
+
+          .\TabularEditor\TabularEditor.exe "$xmlaPath" -B "$bimPath"
+          Write-Host "Conversion complete. BIM file stored at: $bimPath"
 
       - name: Display BIM File Location
         shell: pwsh
         run: |
-          $bimPath = (Resolve-Path "Model.bim").Path
+          $bimPath = (Resolve-Path "bim_output\Model.bim").Path
           Write-Host "BIM file created at: $bimPath"
 
       - name: Upload BIM to Power BI Workspace
         shell: pwsh
         run: |
           Write-Host "Uploading BIM to Power BI Workspace..."
-          .\TabularEditor\TabularEditor.exe Model.bim -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
+          $bimPath = (Resolve-Path "bim_output\Model.bim").Path
+          .\TabularEditor\TabularEditor.exe "$bimPath" -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
           Write-Host "Upload complete."
