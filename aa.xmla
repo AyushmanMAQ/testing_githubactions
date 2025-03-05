@@ -40,7 +40,7 @@
                 ]
               },
               {
-                "name": "Store_Description",
+                "name": "StoreDescription",
                 "dataType": "string",
                 "sourceColumn": "Store Description",
                 "lineageTag": "744dea28-89b9-4ba2-935c-bf81c371f6f9",
