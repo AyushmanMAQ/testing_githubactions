@@ -42,7 +42,12 @@ jobs:
           }
 
           # Run Tabular Editor conversion
-          .\TabularEditor\TabularEditor.exe "aa.xmla" -B "Model.bim"
+          try {
+            .\TabularEditor\TabularEditor.exe "aa.xmla" -B "Model.bim"
+          } catch {
+            Write-Host "❌ Error during conversion: $_"
+            exit 1
+          }
 
           # Verify Model.bim creation
           if (!(Test-Path "Model.bim")) {
@@ -55,4 +60,9 @@ jobs:
       - name: Upload BIM to Power BI Workspace
         shell: pwsh
         run: |
-          .\TabularEditor\TabularEditor.exe Model.bim -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
+          try {
+            .\TabularEditor\TabularEditor.exe Model.bim -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
+          } catch {
+            Write-Host "❌ Error during upload: $_"
+            exit 1
+          }
