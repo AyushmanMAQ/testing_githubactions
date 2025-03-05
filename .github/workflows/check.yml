@@ -14,6 +14,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Print XMLA File Location
+        shell: pwsh
+        run: |
+          $xmlaPath = (Resolve-Path "aa.xmla").Path
+          Write-Host "XMLA file is stored at: $xmlaPath"
+
       - name: Download & Extract Tabular Editor
         run: |
           $url = "https://github.com/otykier/TabularEditor/releases/download/2.16.4/TabularEditor.Portable.zip"
