@@ -23,46 +23,19 @@ jobs:
 
       - name: Verify Tabular Editor Exists
         run: |
-          if (!(Test-Path "TabularEditor\TabularEditor.exe")) {
-            Write-Host "❌ TabularEditor.exe NOT found!"
-            exit 1
-          } else {
-            Write-Host "✅ TabularEditor.exe found!"
-          }
+          Write-Host "Verifying Tabular Editor..."
+          Test-Path "TabularEditor\TabularEditor.exe"
 
       - name: Convert XMLA to BIM
         shell: pwsh
         run: |
-          # Check if aa.xmla file exists
-          if (!(Test-Path "aa.xmla")) {
-            Write-Host "❌ aa.xmla NOT found!"
-            exit 1
-          } else {
-            Write-Host "✅ aa.xmla found, proceeding with conversion"
-          }
-
-          # Run Tabular Editor conversion
-          try {
-            .\TabularEditor\TabularEditor.exe "aa.xmla" -B "Model.bim"
-          } catch {
-            Write-Host "❌ Error during conversion: $_"
-            exit 1
-          }
-
-          # Verify Model.bim creation
-          if (!(Test-Path "Model.bim")) {
-            Write-Host "❌ Model.bim NOT created!"
-            exit 1
-          } else {
-            Write-Host "✅ Model.bim created successfully"
-          }
+          Write-Host "Converting XMLA to BIM..."
+          .\TabularEditor\TabularEditor.exe "aa.xmla" -B "Model.bim"
+          Write-Host "Conversion complete."
 
       - name: Upload BIM to Power BI Workspace
         shell: pwsh
         run: |
-          try {
-            .\TabularEditor\TabularEditor.exe Model.bim -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
-          } catch {
-            Write-Host "❌ Error during upload: $_"
-            exit 1
-          }
+          Write-Host "Uploading BIM to Power BI Workspace..."
+          .\TabularEditor\TabularEditor.exe Model.bim -D "powerbi://api.powerbi.com/v1.0/myorg/Tungsten%20Automation" -O
+          Write-Host "Upload complete."
