@@ -6,7 +6,7 @@
     "database": {
       "name": "DN - new copy",
       "id": "b19b039a-fbab-40b0-9207-405a3008f181",
-      "compatibilityLevel": 1567,
+      "compatibilityLevel": 1500,
       "model": {
         "culture": "en-IN",
         "dataAccessOptions": {
