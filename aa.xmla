@@ -34,7 +34,7 @@
                     "value": "Automaic"
                   },
                   {
-                    "name": "BestPracticeAnalyzer_IgnoreRules",
+                    "name": "BestPracticenalyzer_IgnoreRules",
                     "value": "{\"RuleIDs\":[\"HIDE_FACT_TABLE_COLUMNS\"]}"
                   }
                 ]
