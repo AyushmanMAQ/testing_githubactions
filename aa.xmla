@@ -18,7 +18,7 @@
         "sourceQueryCulture": "en-US",
         "tables": [
           {
-            "name": "Lcatn",
+            "name": "Latn",
             "lineageTag": "7b5ac39c-8d46-4a4b-8e53-7afcd453bb69",
             "columns": [
               {
