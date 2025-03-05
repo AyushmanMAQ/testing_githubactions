@@ -33,6 +33,12 @@ jobs:
           .\TabularEditor\TabularEditor.exe "aa.xmla" -B "Model.bim"
           Write-Host "Conversion complete."
 
+      - name: Display BIM File Location
+        shell: pwsh
+        run: |
+          $bimPath = (Resolve-Path "Model.bim").Path
+          Write-Host "BIM file created at: $bimPath"
+
       - name: Upload BIM to Power BI Workspace
         shell: pwsh
         run: |
